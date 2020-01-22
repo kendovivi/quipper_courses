@@ -20,6 +20,7 @@ class CourseViewModel: ViewModel() {
     private var courseListData: MutableLiveData<List<Course>> = MutableLiveData()
 
     fun loadCourseList(): LiveData<List<Course>> {
+        requestCourseList()
         return courseListData
     }
 
@@ -27,6 +28,7 @@ class CourseViewModel: ViewModel() {
         Log.d(LOGTAG, "requestCourseList")
         getCourseList().enqueue(object: Callback<List<Course>> {
             override fun onFailure(call: Call<List<Course>>, t: Throwable) {
+                Log.d(LOGTAG, "requestCourseList onFailure")
                 loadingStatus.postValue(LoadingStatus.Error)
                 // TODO エラー処理
             }
@@ -35,10 +37,12 @@ class CourseViewModel: ViewModel() {
                 if (response.isSuccessful) {
                     loadingStatus.postValue(LoadingStatus.Success)
                     response.body()?.let {
+                        Log.d(LOGTAG, "requestCourseList Success")
                         courseListData.postValue(it)
                     }
                 } else {
                     loadingStatus.postValue(LoadingStatus.Error)
+                    Log.d(LOGTAG, "requestCourseList Error")
                     // TODO エラー処理
                 }
             }

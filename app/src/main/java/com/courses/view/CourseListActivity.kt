@@ -4,10 +4,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.courses.R
+import com.courses.common.CourseItemDecoration
+import com.courses.view.adapter.CourseRecyclerViewAdapter
 import com.courses.viewmodel.CourseViewModel
+import kotlinx.android.synthetic.main.activity_course_list.*
 
-class CourseListActivity : AppCompatActivity() {
+class CourseListActivity : AppCompatActivity(), CourseRecyclerViewAdapter.CourseListener {
+
+    private var recyclerView: RecyclerView? = null
+    private var adapter: CourseRecyclerViewAdapter? = null
+    private var layoutManager: LinearLayoutManager? = null
 
     private var courseViewModel: CourseViewModel ?= null
 
@@ -15,7 +24,18 @@ class CourseListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_course_list)
 
+        recyclerView = recycler_view_course
+        layoutManager = LinearLayoutManager(this)
+        adapter = CourseRecyclerViewAdapter(this, emptyList(), this)
+        recyclerView?.layoutManager = layoutManager
+        recyclerView?.addItemDecoration(CourseItemDecoration(15))
+        recyclerView?.adapter = adapter
+
         registerViewModel()
+    }
+
+    override fun onBookmarkClick() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun registerViewModel() {
@@ -23,6 +43,7 @@ class CourseListActivity : AppCompatActivity() {
         courseViewModel?.let { model ->
             model.loadCourseList().observe(this, Observer { courseList ->
                 // TODO set data to adapter
+                adapter?.updateContents(courseList)
             })
         }
     }
