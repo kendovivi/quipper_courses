@@ -13,6 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:itemCount="10"
-        tools:layout="@layout/item_course" />
+        tools:layout="@layout/item_course"
+        android:background="@color/colorBgGrey"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
