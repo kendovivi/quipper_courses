@@ -34,8 +34,9 @@ class CourseListActivity : AppCompatActivity(), CourseRecyclerViewAdapter.Course
         registerViewModel()
     }
 
-    override fun onBookmarkClick() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onBookmarkClick(position: Int) {
+        courseViewModel?.handleBookMarkClick(position)
+        adapter?.notifyItemChanged(position)
     }
 
     private fun registerViewModel() {

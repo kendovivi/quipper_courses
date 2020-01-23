@@ -17,6 +17,7 @@ class Course {
     @SerializedName("icon_url")
     val iconUrl: String? = null
     var myProgress: Int?=null
+    var isBookmark: Boolean = false
 
     fun setProgress(progress: Int) {
         this.myProgress = progress

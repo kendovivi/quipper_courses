@@ -97,6 +97,10 @@ class CourseViewModel: ViewModel() {
                 requestCourseProgress(courseId)
             }
         }
+    }
+
+    fun handleBookMarkClick(position: Int) {
+        localCourseListData[position].isBookmark = !localCourseListData[position].isBookmark
 
     }
 

@@ -1,9 +1,11 @@
 package com.courses.view.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -42,8 +44,18 @@ class CourseRecyclerViewAdapter(val context: Context, var courseList: List<Cours
             itemView.tv_course_count.text = course.numberOfTopics.toString()
             itemView.tv_progress.text = course.myProgress.toString()
 
+
+            when (course.isBookmark) {
+                true -> {
+                    itemView.img_bookmark.background = ContextCompat.getDrawable(context, R.color.colorPrimary)
+                }
+                false -> {
+                    itemView.img_bookmark.background = ContextCompat.getDrawable(context, R.color.colorBlack)
+                }
+            }
+
             itemView.img_bookmark.setOnClickListener {
-                courseListener.onBookmarkClick()
+                courseListener.onBookmarkClick(adapterPosition)
             }
 
             var myOptions = RequestOptions()
@@ -61,7 +73,7 @@ class CourseRecyclerViewAdapter(val context: Context, var courseList: List<Cours
     }
 
     interface CourseListener {
-        fun onBookmarkClick()
+        fun onBookmarkClick(position: Int)
     }
 
 }
