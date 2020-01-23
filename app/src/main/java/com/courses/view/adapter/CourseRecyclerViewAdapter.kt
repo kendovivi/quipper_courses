@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.courses.R
 import com.courses.model.Course
 import kotlinx.android.synthetic.main.item_course.view.*
@@ -37,10 +39,17 @@ class CourseRecyclerViewAdapter(val context: Context, var courseList: List<Cours
         fun setup(course: Course) {
             itemView.tv_name.text = course.name
             itemView.tv_teacher_name.text = course.teacherName
+            itemView.tv_course_count.text = course.numberOfTopics.toString()
+            itemView.tv_progress.text = course.myProgress.toString()
 
             itemView.img_bookmark.setOnClickListener {
                 courseListener.onBookmarkClick()
             }
+
+            var myOptions = RequestOptions()
+
+            myOptions.apply(RequestOptions.circleCropTransform())
+            Glide.with(context).asBitmap().load(course.iconUrl).apply(myOptions).into(itemView.img_teacher)
         }
 
     }

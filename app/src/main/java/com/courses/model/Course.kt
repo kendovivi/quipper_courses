@@ -16,4 +16,9 @@ class Course {
     val numberOfTopics: Int? = null
     @SerializedName("icon_url")
     val iconUrl: String? = null
+    var myProgress: Int?=null
+
+    fun setProgress(progress: Int) {
+        this.myProgress = progress
+    }
 }
