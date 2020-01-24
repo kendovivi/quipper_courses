@@ -6,12 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".view.CourseListActivity">
 
+    <Button
+        android:id="@+id/btn_my_course"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="myCourse"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_course"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_my_course"
         tools:itemCount="10"
         tools:layout="@layout/item_course"
         android:background="@color/colorBgGrey"/>

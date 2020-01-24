@@ -55,7 +55,7 @@ class CourseRecyclerViewAdapter(val context: Context, var courseList: List<Cours
             }
 
             itemView.img_bookmark.setOnClickListener {
-                courseListener.onBookmarkClick(adapterPosition)
+                courseListener.onBookmarkClick(adapterPosition, course)
             }
 
             var myOptions = RequestOptions()
@@ -73,7 +73,7 @@ class CourseRecyclerViewAdapter(val context: Context, var courseList: List<Cours
     }
 
     interface CourseListener {
-        fun onBookmarkClick(position: Int)
+        fun onBookmarkClick(position: Int, course: Course)
     }
 
 }

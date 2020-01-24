@@ -1,9 +1,13 @@
 package com.courses.viewmodel
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.courses.common.getBookmarks
+import com.courses.common.saveBookmarkStatus
 import com.courses.model.Course
 import com.courses.model.CourseProgress
 import com.courses.model.getCourseList
@@ -12,7 +16,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CourseViewModel: ViewModel() {
+class CourseViewModel(application: Application): AndroidViewModel(application) {
 
     companion object {
         private const val LOGTAG = "CourseViewModel"
@@ -26,6 +30,21 @@ class CourseViewModel: ViewModel() {
     fun loadCourseList(): LiveData<List<Course>> {
         requestCourseList()
         return courseListData
+    }
+
+    fun getMyBookmarkedCourseList(): List<Course> {
+        return localCourseListData.filter {
+            it.isBookmark == true
+        }
+    }
+
+    fun saveBookmarkStatusToPrefs() {
+        val list = localCourseListData.filter {
+            it.isBookmark == true
+        }.map {
+            it.id!!
+        }
+        saveBookmarkStatus(getApplication(), list)
     }
 
     private fun requestCourseList() {
@@ -76,7 +95,11 @@ class CourseViewModel: ViewModel() {
 
                     }
                     if (progressMap.keys.size == localCourseListData.size) {
+                        val bookmarkedCourses = getBookmarks(getApplication())
                         localCourseListData.forEach {
+                            if (bookmarkedCourses?.contains(it.id) == true) {
+                                it.isBookmark = true
+                            }
                             it.setProgress(progressMap[it.id] ?: -1)
                         }
                         courseListData.postValue(localCourseListData)
@@ -99,9 +122,9 @@ class CourseViewModel: ViewModel() {
         }
     }
 
-    fun handleBookMarkClick(position: Int) {
-        localCourseListData[position].isBookmark = !localCourseListData[position].isBookmark
-
+    fun handleBookMarkClick(position: Int, course: Course) {
+//        localCourseListData[position].isBookmark = !localCourseListData[position].isBookmark
+        course.isBookmark = !course.isBookmark
     }
 
     enum class LoadingStatus {

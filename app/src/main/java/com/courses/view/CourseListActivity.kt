@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.courses.R
 import com.courses.common.CourseItemDecoration
+import com.courses.common.saveBookmarkStatus
+import com.courses.model.Course
 import com.courses.view.adapter.CourseRecyclerViewAdapter
 import com.courses.viewmodel.CourseViewModel
 import kotlinx.android.synthetic.main.activity_course_list.*
@@ -32,10 +34,24 @@ class CourseListActivity : AppCompatActivity(), CourseRecyclerViewAdapter.Course
         recyclerView?.adapter = adapter
 
         registerViewModel()
+
+        btn_my_course.setOnClickListener {
+            courseViewModel?.getMyBookmarkedCourseList()?.let {
+                adapter?.updateContents(it)
+            }
+
+        }
     }
 
-    override fun onBookmarkClick(position: Int) {
-        courseViewModel?.handleBookMarkClick(position)
+    override fun onPause() {
+        super.onPause()
+        // save bookmark data
+        courseViewModel?.saveBookmarkStatusToPrefs()
+
+    }
+
+    override fun onBookmarkClick(position: Int, course: Course) {
+        courseViewModel?.handleBookMarkClick(position, course)
         adapter?.notifyItemChanged(position)
     }
 
@@ -43,7 +59,6 @@ class CourseListActivity : AppCompatActivity(), CourseRecyclerViewAdapter.Course
         courseViewModel = ViewModelProviders.of(this).get(CourseViewModel::class.java)
         courseViewModel?.let { model ->
             model.loadCourseList().observe(this, Observer { courseList ->
-                // TODO set data to adapter
                 adapter?.updateContents(courseList)
             })
         }
