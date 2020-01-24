@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Courses</string>
+    <string name="course_count">%d 講義</string>
 </resources>

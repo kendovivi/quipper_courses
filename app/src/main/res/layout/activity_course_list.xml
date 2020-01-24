@@ -14,14 +14,22 @@
         app:layout_constraintTop_toTopOf="parent"
         android:text="myCourse"/>
 
+    <Button
+        android:id="@+id/btn_reload_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_my_course"
+        android:text="reload_progress"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_course"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_my_course"
+        app:layout_constraintTop_toBottomOf="@+id/btn_reload_progress"
         tools:itemCount="10"
         tools:layout="@layout/item_course"
-        android:background="@color/colorBgGrey"/>
+        android:background="@color/Grey_100"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -63,7 +63,7 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
                         Log.d(LOGTAG, "requestCourseList Success")
 //                        courseListData.postValue(it)
                         localCourseListData = it
-                        loadProgressFromCourseList(it)
+                        loadProgressFromCourseList()
                     }
                 } else {
                     loadingStatus.postValue(LoadingStatus.Error)
@@ -114,8 +114,8 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         })
     }
 
-    private fun loadProgressFromCourseList(list: List<Course>) {
-        list.forEach {
+    fun loadProgressFromCourseList() {
+        localCourseListData.forEach {
             it.id?.let { courseId ->
                 requestCourseProgress(courseId)
             }

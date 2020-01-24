@@ -41,16 +41,21 @@ class CourseRecyclerViewAdapter(val context: Context, var courseList: List<Cours
         fun setup(course: Course) {
             itemView.tv_name.text = course.name
             itemView.tv_teacher_name.text = course.teacherName
-            itemView.tv_course_count.text = course.numberOfTopics.toString()
-            itemView.tv_progress.text = course.myProgress.toString()
-
+            itemView.tv_course_count.text = context.getString(R.string.course_count, course.numberOfTopics)
+            itemView.tv_progress.text =
+                when (course.myProgress) {
+                    0 -> "開始前"
+                    in 1..99 -> "未完了"
+                    100 -> "完了済み"
+                    else -> ""
+                }
 
             when (course.isBookmark) {
                 true -> {
-                    itemView.img_bookmark.background = ContextCompat.getDrawable(context, R.color.colorPrimary)
+                    itemView.img_bookmark.setColorFilter(ContextCompat.getColor(context, R.color.colorAccent))
                 }
                 false -> {
-                    itemView.img_bookmark.background = ContextCompat.getDrawable(context, R.color.colorBlack)
+                    itemView.img_bookmark.setColorFilter(ContextCompat.getColor(context, R.color.Grey_400))
                 }
             }
 

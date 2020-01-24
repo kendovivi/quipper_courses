@@ -39,7 +39,10 @@ class CourseListActivity : AppCompatActivity(), CourseRecyclerViewAdapter.Course
             courseViewModel?.getMyBookmarkedCourseList()?.let {
                 adapter?.updateContents(it)
             }
+        }
 
+        btn_reload_progress.setOnClickListener {
+            courseViewModel?.loadProgressFromCourseList()
         }
     }
 
