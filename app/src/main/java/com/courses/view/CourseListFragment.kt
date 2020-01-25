@@ -57,7 +57,7 @@ class CourseListFragment : Fragment(), CourseRecyclerViewAdapter.CourseListener 
     }
 
     override fun onBookmarkClick(position: Int, course: Course) {
-        courseViewModel?.handleBookMarkClick(position, course)
+        courseViewModel?.handleBookMarkClick(course)
         adapter?.notifyItemChanged(position)
     }
 

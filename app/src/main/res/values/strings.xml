@@ -3,4 +3,8 @@
     <string name="btm_navi_title_course_list">course list</string>
     <string name="btm_navi_title_my_course">my course</string>
     <string name="course_count">%d 講義</string>
+
+    <string name="loading_msg">講義一覧読み込み中、少々を待ちください...</string>
+    <string name="error_msg">エラー: %s 発生しました</string>
+    <string name="btn_retry">再試行</string>
 </resources>

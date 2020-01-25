@@ -6,7 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".view.CourseListActivity">
 
+    <include layout="@layout/layout_loading_error"/>
+
     <LinearLayout
+        android:id="@+id/layout_body"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

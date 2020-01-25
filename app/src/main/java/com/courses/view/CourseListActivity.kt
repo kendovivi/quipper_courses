@@ -3,6 +3,7 @@ package com.courses.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -16,6 +17,7 @@ import com.courses.view.adapter.CourseRecyclerViewAdapter
 import com.courses.viewmodel.CourseViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_course_list.*
+import kotlinx.android.synthetic.main.layout_loading_error.*
 
 class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -37,14 +39,12 @@ class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
 
         registerViewModel()
 
-//        btn_my_course.setOnClickListener {
-//            courseViewModel?.getMyBookmarkedCourseList()?.let {
-//                adapter?.updateContents(it)
-//            }
-//        }
-
         btn_reload_progress.setOnClickListener {
             courseViewModel?.loadProgressFromCourseList()
+        }
+
+        btn_retry.setOnClickListener {
+            courseViewModel?.loadCourseList()
         }
     }
 
@@ -60,10 +60,12 @@ class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
             R.id.navigation_course_list -> {
                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("fg_my_course")!!).show(fragmentManager.findFragmentByTag("fg_course_list")!!).commit()
                 courseViewModel?.loadLocalCourseList()
+                toolbarTitle.text = "Course List"
             }
             R.id.navigation_my_course -> {
                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("fg_course_list")!!).show(fragmentManager.findFragmentByTag("fg_my_course")!!).commit()
                 courseViewModel?.updateMyBookmarkedCourseList()
+                toolbarTitle.text = "Bookmarked Courses"
             }
         }
         return true
@@ -71,5 +73,33 @@ class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
 
     private fun registerViewModel() {
         courseViewModel = ViewModelProviders.of(this).get(CourseViewModel::class.java)
+        courseViewModel?.let { model ->
+            model.getLoadingStatus().observe(this, Observer { loadingStatus ->
+                when (loadingStatus.first) {
+                    CourseViewModel.LoadingStatus.Loading -> {
+                        layout_loading.visibility = View.VISIBLE
+                        layout_error.visibility = View.GONE
+                        layout_body.visibility = View.GONE
+                    }
+                    CourseViewModel.LoadingStatus.Success -> {
+                        layout_loading.visibility = View.GONE
+                        layout_error.visibility = View.GONE
+                        layout_body.visibility = View.VISIBLE
+                    }
+                    CourseViewModel.LoadingStatus.Error -> {
+                        layout_loading.visibility = View.GONE
+                        layout_error.visibility = View.VISIBLE
+                        tv_error_msg.text = getString(R.string.error_msg, loadingStatus.second)
+                        layout_body.visibility = View.GONE
+                    }
+                    else -> {
+                        layout_loading.visibility = View.GONE
+                        layout_error.visibility = View.VISIBLE
+                        layout_body.visibility = View.GONE
+                    }
+                }
+            })
+        }
+
     }
 }

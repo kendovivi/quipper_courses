@@ -22,12 +22,16 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         private const val LOGTAG = "CourseViewModel"
     }
 
-    private var loadingStatus: MutableLiveData<LoadingStatus> = MutableLiveData()
+    private var loadingStatus: MutableLiveData<Pair<LoadingStatus, String?>> = MutableLiveData()
     private var localCourseListData: List<Course> = mutableListOf()
     private var courseListData: MutableLiveData<List<Course>> = MutableLiveData()
     private var bookmarkedCourseList: MutableLiveData<List<Course>> = MutableLiveData()
     private var progressMap: MutableMap<String, Int> = mutableMapOf()
     private var firstBoot: Boolean = true
+
+    fun getLoadingStatus(): LiveData<Pair<LoadingStatus, String?>> {
+        return loadingStatus
+    }
 
     fun loadCourseList(): LiveData<List<Course>> {
         requestCourseList()
@@ -61,45 +65,35 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
     }
 
     private fun requestCourseList() {
-        Log.d(LOGTAG, "requestCourseList")
+        loadingStatus.postValue(Pair(LoadingStatus.Loading, null))
         getCourseList().enqueue(object: Callback<List<Course>> {
             override fun onFailure(call: Call<List<Course>>, t: Throwable) {
-                Log.d(LOGTAG, "requestCourseList onFailure")
-                loadingStatus.postValue(LoadingStatus.Error)
-                // TODO エラー処理
+                loadingStatus.postValue(Pair(LoadingStatus.Error, t.localizedMessage))
             }
 
             override fun onResponse(call: Call<List<Course>>, response: Response<List<Course>>) {
                 if (response.isSuccessful) {
-                    loadingStatus.postValue(LoadingStatus.Success)
+                    loadingStatus.postValue(Pair(LoadingStatus.Success, null))
                     response.body()?.let {
-                        Log.d(LOGTAG, "requestCourseList Success")
-//                        courseListData.postValue(it)
                         localCourseListData = it
                         loadProgressFromCourseList()
                     }
                 } else {
-                    loadingStatus.postValue(LoadingStatus.Error)
-                    Log.d(LOGTAG, "requestCourseList Error")
-                    // TODO エラー処理
+                    loadingStatus.postValue(Pair(LoadingStatus.Error, response.code().toString()))
                 }
             }
         })
     }
 
     private fun requestCourseProgress(courseId: String) {
-        Log.d(LOGTAG, "requestCourseProgress courseId: $courseId")
         progressMap[courseId] = -1
         getCourseProgress(courseId).enqueue(object: Callback<CourseProgress> {
             override fun onFailure(call: Call<CourseProgress>, t: Throwable) {
                 Log.d(LOGTAG, "requestCourseProgress onFailure")
-//                loadingStatus.postValue(LoadingStatus.Error)
-                // TODO エラー処理
             }
 
             override fun onResponse(call: Call<CourseProgress>, response: Response<CourseProgress>) {
                 if (response.isSuccessful) {
-                    loadingStatus.postValue(LoadingStatus.Success)
                     response.body()?.let { courseProgress ->
                         Log.d(LOGTAG, "requestCourseProgress Success")
                         courseProgress.courseId?.let {
@@ -120,9 +114,7 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
                     }
 
                 } else {
-                    loadingStatus.postValue(LoadingStatus.Error)
                     Log.d(LOGTAG, "requestCourseProgress Error")
-                    // TODO エラー処理
                 }
             }
         })
@@ -141,8 +133,7 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun handleBookMarkClick(position: Int, course: Course) {
-//        localCourseListData[position].isBookmark = !localCourseListData[position].isBookmark
+    fun handleBookMarkClick(course: Course) {
         course.isBookmark = !course.isBookmark
     }
 
