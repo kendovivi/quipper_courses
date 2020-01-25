@@ -27,6 +27,7 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
     private var courseListData: MutableLiveData<List<Course>> = MutableLiveData()
     private var bookmarkedCourseList: MutableLiveData<List<Course>> = MutableLiveData()
     private var progressMap: MutableMap<String, Int> = mutableMapOf()
+    private var firstBoot: Boolean = true
 
     fun loadCourseList(): LiveData<List<Course>> {
         requestCourseList()
@@ -128,6 +129,11 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun loadProgressFromCourseList() {
+        if (firstBoot) {
+            firstBoot = false
+        } else {
+            saveBookmarkStatusToPrefs()
+        }
         localCourseListData.forEach {
             it.id?.let { courseId ->
                 requestCourseProgress(courseId)
