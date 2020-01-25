@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_course_list"
+        android:icon="@drawable/selector_icon_course_list"
+        app:showAsAction="ifRoom"
+        android:title="@string/btm_navi_title_course_list" />
+
+    <item
+        android:id="@+id/navigation_my_course"
+        android:icon="@drawable/selector_icon_my_course"
+        app:showAsAction="ifRoom"
+        android:title="@string/btm_navi_title_my_course" />
+
+</menu>

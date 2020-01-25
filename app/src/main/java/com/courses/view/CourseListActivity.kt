@@ -2,6 +2,7 @@ package com.courses.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +13,10 @@ import com.courses.common.saveBookmarkStatus
 import com.courses.model.Course
 import com.courses.view.adapter.CourseRecyclerViewAdapter
 import com.courses.viewmodel.CourseViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_course_list.*
 
-class CourseListActivity : AppCompatActivity(), CourseRecyclerViewAdapter.CourseListener {
+class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener, CourseRecyclerViewAdapter.CourseListener {
 
     private var recyclerView: RecyclerView? = null
     private var adapter: CourseRecyclerViewAdapter? = null
@@ -32,6 +34,8 @@ class CourseListActivity : AppCompatActivity(), CourseRecyclerViewAdapter.Course
         recyclerView?.layoutManager = layoutManager
         recyclerView?.addItemDecoration(CourseItemDecoration(15))
         recyclerView?.adapter = adapter
+
+        navigation.setOnNavigationItemSelectedListener(this)
 
         registerViewModel()
 
@@ -56,6 +60,18 @@ class CourseListActivity : AppCompatActivity(), CourseRecyclerViewAdapter.Course
     override fun onBookmarkClick(position: Int, course: Course) {
         courseViewModel?.handleBookMarkClick(position, course)
         adapter?.notifyItemChanged(position)
+    }
+
+    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.navigation_course_list -> {
+
+            }
+            R.id.navigation_my_course -> {
+
+            }
+        }
+        return true
     }
 
     private fun registerViewModel() {

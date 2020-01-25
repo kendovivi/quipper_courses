@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Courses</string>
+    <string name="btm_navi_title_course_list">course list</string>
+    <string name="btm_navi_title_my_course">my course</string>
     <string name="course_count">%d 講義</string>
 </resources>
