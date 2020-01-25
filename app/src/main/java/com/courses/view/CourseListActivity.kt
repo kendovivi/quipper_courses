@@ -1,19 +1,16 @@
 package com.courses.view
 
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.courses.R
-import com.courses.common.CourseItemDecoration
-import com.courses.common.saveBookmarkStatus
-import com.courses.model.Course
-import com.courses.view.adapter.CourseRecyclerViewAdapter
 import com.courses.viewmodel.CourseViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_course_list.*
@@ -28,16 +25,19 @@ class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_course_list)
 
+        registerViewModel()
+
+        val connManager: ConnectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = connManager.activeNetworkInfo
+        courseViewModel?.setIsDeviceOnline(netInfo != null && netInfo.isConnected)
+
         val courseListFragment: CourseListFragment = CourseListFragment.newInstance()
         val myCourseFragment: MyCourseFragment = MyCourseFragment.newInstance()
 
         fragmentManager.beginTransaction().add(R.id.fragment_container, courseListFragment , "fg_course_list").commit()
         fragmentManager.beginTransaction().add(R.id.fragment_container, myCourseFragment, "fg_my_course").hide(myCourseFragment).commit()
 
-
         navigation.setOnNavigationItemSelectedListener(this)
-
-        registerViewModel()
 
         btn_reload_progress.setOnClickListener {
             courseViewModel?.loadProgressFromCourseList()

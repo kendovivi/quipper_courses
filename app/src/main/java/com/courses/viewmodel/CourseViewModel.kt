@@ -5,9 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.courses.common.getBookmarks
-import com.courses.common.saveBookmarkStatus
+import com.courses.common.*
 import com.courses.model.Course
 import com.courses.model.CourseProgress
 import com.courses.model.getCourseList
@@ -28,6 +26,7 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
     private var bookmarkedCourseList: MutableLiveData<List<Course>> = MutableLiveData()
     private var progressMap: MutableMap<String, Int> = mutableMapOf()
     private var firstBoot: Boolean = true
+    private var isDeviceOnline: Boolean = false
 
     fun getLoadingStatus(): LiveData<Pair<LoadingStatus, String?>> {
         return loadingStatus
@@ -64,25 +63,47 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    private fun requestCourseList() {
-        loadingStatus.postValue(Pair(LoadingStatus.Loading, null))
-        getCourseList().enqueue(object: Callback<List<Course>> {
-            override fun onFailure(call: Call<List<Course>>, t: Throwable) {
-                loadingStatus.postValue(Pair(LoadingStatus.Error, t.localizedMessage))
-            }
+    fun setIsDeviceOnline(isOnline: Boolean) {
+        isDeviceOnline = isOnline
+    }
 
-            override fun onResponse(call: Call<List<Course>>, response: Response<List<Course>>) {
-                if (response.isSuccessful) {
-                    loadingStatus.postValue(Pair(LoadingStatus.Success, null))
-                    response.body()?.let {
-                        localCourseListData = it
-                        loadProgressFromCourseList()
-                    }
-                } else {
-                    loadingStatus.postValue(Pair(LoadingStatus.Error, response.code().toString()))
-                }
+    private fun requestCourseList() {
+        if (!isDeviceOnline) {
+            firstBoot = false
+            localCourseListData = getCourseList(getApplication()) ?: mutableListOf()
+            if (localCourseListData.isNotEmpty()) { // if device is offline and course list is not empty, show the list
+                courseListData.postValue(localCourseListData)
+            } else {
+                loadingStatus.postValue(Pair(LoadingStatus.Error, "device offline"))
             }
-        })
+        } else {
+            loadingStatus.postValue(Pair(LoadingStatus.Loading, null))
+            getCourseList().enqueue(object : Callback<List<Course>> {
+                override fun onFailure(call: Call<List<Course>>, t: Throwable) {
+                    loadingStatus.postValue(Pair(LoadingStatus.Error, t.localizedMessage))
+                }
+
+                override fun onResponse(
+                    call: Call<List<Course>>,
+                    response: Response<List<Course>>
+                ) {
+                    if (response.isSuccessful) {
+                        loadingStatus.postValue(Pair(LoadingStatus.Success, null))
+                        response.body()?.let {
+                            localCourseListData = it
+                            loadProgressFromCourseList()
+                        }
+                    } else {
+                        loadingStatus.postValue(
+                            Pair(
+                                LoadingStatus.Error,
+                                response.code().toString()
+                            )
+                        )
+                    }
+                }
+            })
+        }
     }
 
     private fun requestCourseProgress(courseId: String) {
@@ -109,6 +130,7 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
                             }
                             it.setProgress(progressMap[it.id] ?: -1)
                         }
+                        saveCourseList(getApplication(), localCourseListData)
                         courseListData.postValue(localCourseListData)
                         updateMyBookmarkedCourseList()
                     }
@@ -121,14 +143,16 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun loadProgressFromCourseList() {
-        if (firstBoot) {
-            firstBoot = false
-        } else {
-            saveBookmarkStatusToPrefs()
-        }
-        localCourseListData.forEach {
-            it.id?.let { courseId ->
-                requestCourseProgress(courseId)
+        if (isDeviceOnline) {
+            if (firstBoot) {
+                firstBoot = false
+            } else {
+                saveBookmarkStatusToPrefs()
+            }
+            localCourseListData.forEach {
+                it.id?.let { courseId ->
+                    requestCourseProgress(courseId)
+                }
             }
         }
     }
