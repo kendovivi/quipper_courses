@@ -3,6 +3,7 @@ package com.courses.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,34 +17,31 @@ import com.courses.viewmodel.CourseViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_course_list.*
 
-class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener, CourseRecyclerViewAdapter.CourseListener {
+class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
-    private var recyclerView: RecyclerView? = null
-    private var adapter: CourseRecyclerViewAdapter? = null
-    private var layoutManager: LinearLayoutManager? = null
-
-    private var courseViewModel: CourseViewModel ?= null
+    private var courseViewModel: CourseViewModel? = null
+    private var fragmentManager: FragmentManager = supportFragmentManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_course_list)
 
-        recyclerView = recycler_view_course
-        layoutManager = LinearLayoutManager(this)
-        adapter = CourseRecyclerViewAdapter(this, emptyList(), this)
-        recyclerView?.layoutManager = layoutManager
-        recyclerView?.addItemDecoration(CourseItemDecoration(15))
-        recyclerView?.adapter = adapter
+        val courseListFragment: CourseListFragment = CourseListFragment.newInstance()
+        val myCourseFragment: MyCourseFragment = MyCourseFragment.newInstance()
+
+        fragmentManager.beginTransaction().add(R.id.fragment_container, courseListFragment , "fg_course_list").commit()
+        fragmentManager.beginTransaction().add(R.id.fragment_container, myCourseFragment, "fg_my_course").hide(myCourseFragment).commit()
+
 
         navigation.setOnNavigationItemSelectedListener(this)
 
         registerViewModel()
 
-        btn_my_course.setOnClickListener {
-            courseViewModel?.getMyBookmarkedCourseList()?.let {
-                adapter?.updateContents(it)
-            }
-        }
+//        btn_my_course.setOnClickListener {
+//            courseViewModel?.getMyBookmarkedCourseList()?.let {
+//                adapter?.updateContents(it)
+//            }
+//        }
 
         btn_reload_progress.setOnClickListener {
             courseViewModel?.loadProgressFromCourseList()
@@ -57,18 +55,15 @@ class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
 
     }
 
-    override fun onBookmarkClick(position: Int, course: Course) {
-        courseViewModel?.handleBookMarkClick(position, course)
-        adapter?.notifyItemChanged(position)
-    }
-
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.navigation_course_list -> {
-
+                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("fg_my_course")!!).show(fragmentManager.findFragmentByTag("fg_course_list")!!).commit()
+                courseViewModel?.loadLocalCourseList()
             }
             R.id.navigation_my_course -> {
-
+                fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("fg_course_list")!!).show(fragmentManager.findFragmentByTag("fg_my_course")!!).commit()
+                courseViewModel?.updateMyBookmarkedCourseList()
             }
         }
         return true
@@ -76,10 +71,5 @@ class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
 
     private fun registerViewModel() {
         courseViewModel = ViewModelProviders.of(this).get(CourseViewModel::class.java)
-        courseViewModel?.let { model ->
-            model.loadCourseList().observe(this, Observer { courseList ->
-                adapter?.updateContents(courseList)
-            })
-        }
     }
 }

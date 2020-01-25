@@ -25,6 +25,7 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
     private var loadingStatus: MutableLiveData<LoadingStatus> = MutableLiveData()
     private var localCourseListData: List<Course> = mutableListOf()
     private var courseListData: MutableLiveData<List<Course>> = MutableLiveData()
+    private var bookmarkedCourseList: MutableLiveData<List<Course>> = MutableLiveData()
     private var progressMap: MutableMap<String, Int> = mutableMapOf()
 
     fun loadCourseList(): LiveData<List<Course>> {
@@ -32,19 +33,30 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         return courseListData
     }
 
-    fun getMyBookmarkedCourseList(): List<Course> {
-        return localCourseListData.filter {
+    fun getMyBookmarkedCourseList(): LiveData<List<Course>> {
+        return bookmarkedCourseList
+    }
+
+    fun updateMyBookmarkedCourseList() {
+        val list = localCourseListData.filter {
             it.isBookmark == true
         }
+        return bookmarkedCourseList.postValue(list)
+    }
+
+    fun loadLocalCourseList() {
+        courseListData.postValue(localCourseListData)
     }
 
     fun saveBookmarkStatusToPrefs() {
-        val list = localCourseListData.filter {
-            it.isBookmark == true
-        }.map {
-            it.id!!
+        if (localCourseListData.isNotEmpty()) { // if load error, do not overwrite prefs
+            val list = localCourseListData.filter {
+                it.isBookmark == true
+            }.map {
+                it.id!!
+            }
+            saveBookmarkStatus(getApplication(), list)
         }
-        saveBookmarkStatus(getApplication(), list)
     }
 
     private fun requestCourseList() {
@@ -103,6 +115,7 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
                             it.setProgress(progressMap[it.id] ?: -1)
                         }
                         courseListData.postValue(localCourseListData)
+                        updateMyBookmarkedCourseList()
                     }
 
                 } else {
