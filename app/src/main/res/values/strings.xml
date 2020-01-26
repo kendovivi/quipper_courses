@@ -7,4 +7,6 @@
     <string name="loading_msg">講義一覧読み込み中、少々を待ちください...</string>
     <string name="error_msg">エラー: %s 発生しました</string>
     <string name="btn_retry">再試行</string>
+    <string name="label_title_course_list">Course List</string>
+    <string name="label_title_bookmarked_course">Bookmarked Courses</string>
 </resources>

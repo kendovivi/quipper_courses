@@ -60,12 +60,12 @@ class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
             R.id.navigation_course_list -> {
                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("fg_my_course")!!).show(fragmentManager.findFragmentByTag("fg_course_list")!!).commit()
                 courseViewModel?.loadLocalCourseList()
-                toolbarTitle.text = "Course List"
+                toolbarTitle.text = getString(R.string.label_title_course_list)
             }
             R.id.navigation_my_course -> {
                 fragmentManager.beginTransaction().hide(fragmentManager.findFragmentByTag("fg_course_list")!!).show(fragmentManager.findFragmentByTag("fg_my_course")!!).commit()
                 courseViewModel?.updateMyBookmarkedCourseList()
-                toolbarTitle.text = "Bookmarked Courses"
+                toolbarTitle.text = getString(R.string.label_title_bookmarked_course)
             }
         }
         return true
