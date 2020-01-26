@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.fragment.app.FragmentManager
@@ -27,13 +26,14 @@ class CourseListActivity : AppCompatActivity(), BottomNavigationView.OnNavigatio
 
         registerViewModel()
 
+        // check device network connection status, and set to viewmodel
         val connManager: ConnectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val netInfo = connManager.activeNetworkInfo
         courseViewModel?.setIsDeviceOnline(netInfo != null && netInfo.isConnected)
 
+        // init fragment
         val courseListFragment: CourseListFragment = CourseListFragment.newInstance()
         val myCourseFragment: MyCourseFragment = MyCourseFragment.newInstance()
-
         fragmentManager.beginTransaction().add(R.id.fragment_container, courseListFragment , "fg_course_list").commit()
         fragmentManager.beginTransaction().add(R.id.fragment_container, myCourseFragment, "fg_my_course").hide(myCourseFragment).commit()
 

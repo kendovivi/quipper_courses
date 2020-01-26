@@ -28,19 +28,31 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
     private var firstBoot: Boolean = true
     private var isDeviceOnline: Boolean = false
 
+    /**
+     * get loading status live data
+     */
     fun getLoadingStatus(): LiveData<Pair<LoadingStatus, String?>> {
         return loadingStatus
     }
 
+    /**
+     * load course list live data
+     */
     fun loadCourseList(): LiveData<List<Course>> {
         requestCourseList()
         return courseListData
     }
 
+    /**
+     * get bookmarked course list live data
+     */
     fun getMyBookmarkedCourseList(): LiveData<List<Course>> {
         return bookmarkedCourseList
     }
 
+    /**
+     * set bookmarked course list
+     */
     fun updateMyBookmarkedCourseList() {
         val list = localCourseListData.filter {
             it.isBookmark == true
@@ -48,10 +60,16 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         return bookmarkedCourseList.postValue(list)
     }
 
+    /**
+     * set local course list
+     */
     fun loadLocalCourseList() {
         courseListData.postValue(localCourseListData)
     }
 
+    /**
+     * save bookmark status
+     */
     fun saveBookmarkStatusToPrefs() {
         if (localCourseListData.isNotEmpty()) { // if load error, do not overwrite prefs
             val list = localCourseListData.filter {
@@ -63,10 +81,16 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    /**
+     * set device network connection status
+     */
     fun setIsDeviceOnline(isOnline: Boolean) {
         isDeviceOnline = isOnline
     }
 
+    /**
+     * call request course list api
+     */
     private fun requestCourseList() {
         if (!isDeviceOnline) {
             firstBoot = false
@@ -106,6 +130,9 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    /**
+     * call request progress api
+     */
     private fun requestCourseProgress(courseId: String) {
         progressMap[courseId] = -1
         getCourseProgress(courseId).enqueue(object: Callback<CourseProgress> {
@@ -142,6 +169,9 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         })
     }
 
+    /**
+     * load progress according to the local course list
+     */
     fun loadProgressFromCourseList() {
         if (isDeviceOnline) {
             if (firstBoot) {
@@ -157,10 +187,16 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    /**
+     * handle book mark click event
+     */
     fun handleBookMarkClick(course: Course) {
         course.isBookmark = !course.isBookmark
     }
 
+    /**
+     * loading status enum
+     */
     enum class LoadingStatus {
         Loading,
         Success,

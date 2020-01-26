@@ -6,6 +6,9 @@ import com.courses.model.Course
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+/**
+ * save bookmark status to prefs
+ */
 fun saveBookmarkStatus(context: Context, list: List<String>) {
     val editor = getDefaultSharedPreferences(context.applicationContext).edit()
     val jsonBookmark = Gson().toJson(list)
@@ -13,6 +16,9 @@ fun saveBookmarkStatus(context: Context, list: List<String>) {
     editor.apply()
 }
 
+/**
+ * get bookmark status from prefs
+ */
 fun getBookmarks(context: Context): List<String>? {
     val bookmarkStr = getDefaultSharedPreferences(context.applicationContext).getString("bookmarked_course", null)
     val type = object : TypeToken<List<String>>() {}.type
@@ -23,6 +29,9 @@ fun getBookmarks(context: Context): List<String>? {
     }
 }
 
+/**
+ * save current course list to prefs
+ */
 fun saveCourseList(context: Context, list: List<Course>) {
     val jsonCourse = Gson().toJson(list)
 
@@ -32,6 +41,9 @@ fun saveCourseList(context: Context, list: List<Course>) {
     editor.apply()
 }
 
+/**
+ * get current course list from prefs
+ */
 fun getCourseList(context: Context): List<Course>? {
     val listStr = getDefaultSharedPreferences(context.applicationContext).getString("course_list", null)
     val type = object : TypeToken<List<Course>>() {}.type

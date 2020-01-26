@@ -22,6 +22,9 @@ fun getCourseProgress(courseId: String): Call<CourseProgress> {
     return getRetrofit().create(CourseApi::class.java).getCourseProgress(courseId)
 }
 
+/**
+ * get retrofit instance
+ */
 private fun getRetrofit(): Retrofit {
     return Retrofit.Builder()
         .baseUrl(BASE_URL)
