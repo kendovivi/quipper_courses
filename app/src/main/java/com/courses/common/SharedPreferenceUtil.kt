@@ -8,30 +8,27 @@ import com.google.gson.reflect.TypeToken
 
 fun saveBookmarkStatus(context: Context, list: List<String>) {
     val editor = getDefaultSharedPreferences(context.applicationContext).edit()
-    var bookmarkStr = ""
-    if (list.isNotEmpty()) {
-        list.forEach { courseId ->
-            bookmarkStr += "$courseId,"
-        }
-    }
-    editor.putString("bookmarked_course", bookmarkStr)
+    val jsonBookmark = Gson().toJson(list)
+    editor.putString("bookmarked_course", jsonBookmark)
     editor.apply()
 }
 
 fun getBookmarks(context: Context): List<String>? {
     val bookmarkStr = getDefaultSharedPreferences(context.applicationContext).getString("bookmarked_course", null)
-    if (!bookmarkStr.isNullOrEmpty()) {
-        return bookmarkStr.split(",")
+    val type = object : TypeToken<List<String>>() {}.type
+    bookmarkStr?.let {
+        return Gson().fromJson(it, type)
+    } ?: run {
+        return null
     }
-    return null
 }
 
 fun saveCourseList(context: Context, list: List<Course>) {
-    val jsonCurProduct = Gson().toJson(list)
+    val jsonCourse = Gson().toJson(list)
 
     val editor = getDefaultSharedPreferences(context.applicationContext).edit()
 
-    editor.putString("course_list", jsonCurProduct)
+    editor.putString("course_list", jsonCourse)
     editor.apply()
 }
 

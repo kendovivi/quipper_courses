@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 /**
  * 講座の進捗
  */
-class CourseProgress {
+data class CourseProgress (
     @SerializedName("course_id")
-    val courseId: String? = null
+    val courseId: String? = null,
     @SerializedName("progress")
     val progress: Int? = null
-}
+)

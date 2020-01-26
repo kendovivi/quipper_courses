@@ -128,7 +128,7 @@ class CourseViewModel(application: Application): AndroidViewModel(application) {
                             if (bookmarkedCourses?.contains(it.id) == true) {
                                 it.isBookmark = true
                             }
-                            it.setProgress(progressMap[it.id] ?: -1)
+                            it.myProgress = progressMap[it.id] ?: -1
                         }
                         saveCourseList(getApplication(), localCourseListData)
                         courseListData.postValue(localCourseListData)
