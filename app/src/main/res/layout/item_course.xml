@@ -19,14 +19,28 @@
             android:layout_toStartOf="@+id/img_bookmark"
             android:padding="15dp">
 
-            <ImageView
-                android:id="@+id/img_teacher"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/shape_stroke_circle"
+            <RelativeLayout
+                android:id="@+id/layout_img_teacher"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <ImageView
+                    android:layout_width="65dp"
+                    android:layout_height="65dp"
+                    android:background="@drawable/shape_stroke_circle"
+                    android:layout_centerInParent="true"/>
+
+                <ImageView
+                    android:id="@+id/img_teacher"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/shape_circle"
+                    android:layout_centerInParent="true"/>
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -34,7 +48,7 @@
                 android:layout_marginStart="15dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/img_teacher"
+                app:layout_constraintStart_toEndOf="@+id/layout_img_teacher"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
