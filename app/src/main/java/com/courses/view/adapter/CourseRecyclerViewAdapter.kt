@@ -82,29 +82,11 @@ class CourseRecyclerViewAdapter(val context: Context, var courseList: List<Cours
     }
 
     /**
-     * update list if there is a diff between new list and old list
+     * update list
      */
     fun updateContents(newList: List<Course>) {
-        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-
-            override fun getOldListSize(): Int = courseList.size
-
-            override fun getNewListSize(): Int = newList.size
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean
-                    = courseList[oldItemPosition] == newList[newItemPosition]
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return if (courseList[oldItemPosition] is Course && (newList[newItemPosition] is Course)) {
-                    (courseList[oldItemPosition]).id == (newList[newItemPosition]).id
-                } else {
-                    courseList[oldItemPosition] == newList[newItemPosition]
-                }
-            }
-
-        })
         courseList = newList.toMutableList()
-        diffResult.dispatchUpdatesTo(this)
+        notifyDataSetChanged()
     }
 
     /**
