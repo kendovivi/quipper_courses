@@ -5,6 +5,7 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorProgress">#37b8ff</color>
 
     <color name="Grey_50">#FAFAFA</color>
     <color name="Grey_100">#F5F5F5</color>
@@ -16,4 +17,5 @@
     <color name="Grey_700">#616161</color>
     <color name="Grey_800">#424242</color>
     <color name="Grey_900">#212121</color>
+    <color name="transparent">#00000000</color>
 </resources>
